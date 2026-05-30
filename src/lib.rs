@@ -91,6 +91,7 @@ impl ImageDecomposer {
         sum / n as f64
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn region_variance(&self, pixels: &[u8], w: u32, x0: u32, y0: u32, rw: u32, rh: u32, mean: f64) -> f64 {
         let ch = self.channels as usize;
         let stride = w as usize * ch;
@@ -143,7 +144,7 @@ impl ImageDecomposer {
                 let mut meta = HashMap::new();
                 meta.insert("grid_x".into(), (x / tile_size).to_string());
                 meta.insert("grid_y".into(), (y / tile_size).to_string());
-                tiles.push(ImageTile { id: Uuid::new_v4(), x, y, width: tw, height: th, avg_brightness: br, variance: var, edge_density: edge, meta, index: idx as u64 });
+                tiles.push(ImageTile { id: Uuid::new_v4(), x, y, width: tw, height: th, avg_brightness: br, variance: var, edge_density: edge, meta, index: idx });
                 idx += 1;
                 x += tile_size;
             }
@@ -184,7 +185,7 @@ impl ImageDecomposer {
         tiles
     }
 
-    pub fn conservation_ratio(&self, original: &[u8], tiles: &[ImageTile], width: u32, height: u32) -> f64 {
+    pub fn conservation_ratio(&self, _original: &[u8], tiles: &[ImageTile], width: u32, height: u32) -> f64 {
         let total = (width as u64) * (height as u64);
         let covered: u64 = tiles.iter().map(|t| (t.width as u64) * (t.height as u64)).sum();
         if total == 0 { return 1.0; }
